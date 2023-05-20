@@ -40,3 +40,4 @@ def save_symmetric_key(key: bytes, file_name: str) -> None:
         logging.info(f' Symmetric key successfully saved to {file_name}')
     except OSError as err:
         logging.warning(f' Symmetric key was not saved to file {file_name}\n{err}')
+        
