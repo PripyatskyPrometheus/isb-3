@@ -14,10 +14,15 @@ def generate_asymmetric_keys() -> tuple:
     )
     private_key = keys
     public_key = keys.public_key()
-    logging.info(f' Asymmetric keys successfully generated')
+    logging.info(f'Asymmetric keys successfully generated')
     return private_key, public_key
 
 def asymmetric_encrypt(public_key, text: bytes) -> bytes:
     cipher_text = public_key.encrypt(text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
-    logging.info(' Asymmetric encryption was successful')
+    logging.info('Asymmetric encryption was successful')
     return cipher_text
+
+def asymmetric_decrypt(private_key, cipher_text: bytes) -> bytes:
+    text = private_key.decrypt(cipher_text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
+    logging.info('Asymmetric decryption was successful')
+    return text

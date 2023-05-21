@@ -1,9 +1,9 @@
 import argparse
 import logging
 
-from system_functen import load_settings, save_asymmetric_keys, save_symmetric_key
-from symmetric_encyption import generate_symmetric_key
-from asymmetric_encyption import generate_asymmetric_keys, asymmetric_encrypt
+from system_functen import load_settings, save_asymmetric_keys, save_symmetric_key, load_private_key, load_symmetric_key, byte_read_text, byte_write_text
+from symmetric_encyption import generate_symmetric_key, symmetric_encrypt
+from asymmetric_encyption import generate_asymmetric_keys, asymmetric_encrypt, asymmetric_decrypt
 
 SETTINGS_FILE = 'files/settings.json'
 
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     settings = load_settings(args.settings) if args.settings else load_settings(SETTINGS_FILE)
     if settings:
-         if args.generation:
+        if args.generation:
             length = args.generation
             if 4 <= length <= 56:
                 symmetric_key = generate_symmetric_key(length)
@@ -27,3 +27,10 @@ if __name__ == '__main__':
                 save_symmetric_key(cipher_symmetric_key, settings['symmetric_key'])
             else:
                 logging.warning('Symmetric key must be between 4 and 56 bytes long')
+        elif args.encryption:
+            private_key = load_private_key(settings['secret_key'])
+            cipher_key = load_symmetric_key(settings['symmetric_key'])
+            symmetric_key = asymmetric_decrypt(private_key, cipher_key)
+            text = byte_read_text(settings['initial_file'])
+            cipher_text = symmetric_encrypt(symmetric_key, text)
+            byte_write_text(cipher_text, settings['encrypted_file'])
