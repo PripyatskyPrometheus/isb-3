@@ -6,12 +6,8 @@ from cryptography.hazmat.primitives import hashes
 logger = logging.getLogger()
 logger.setLevel('INFO')
 
-
 def generate_asymmetric_keys() -> tuple:
-    keys = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048
-    )
+    keys = rsa.generate_private_key( public_exponent=65537,key_size=2048)
     private_key = keys
     public_key = keys.public_key()
     logging.info(f'Asymmetric keys successfully generated')

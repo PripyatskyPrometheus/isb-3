@@ -2,7 +2,7 @@ import argparse
 import logging
 
 from system_functen import load_settings, save_asymmetric_keys, save_symmetric_key, load_private_key, load_symmetric_key, byte_read_text, byte_write_text
-from symmetric_encyption import generate_symmetric_key, symmetric_encrypt
+from symmetric_encyption import generate_symmetric_key, symmetric_encrypt, symmetric_decrypt
 from asymmetric_encyption import generate_asymmetric_keys, asymmetric_encrypt, asymmetric_decrypt
 
 SETTINGS_FILE = 'files/settings.json'
@@ -34,3 +34,10 @@ if __name__ == '__main__':
             text = byte_read_text(settings['initial_file'])
             cipher_text = symmetric_encrypt(symmetric_key, text)
             byte_write_text(cipher_text, settings['encrypted_file'])
+        else:
+            private_key = load_private_key(settings['secret_key'])
+            cipher_key = load_symmetric_key(settings['symmetric_key'])
+            symmetric_key = asymmetric_decrypt(private_key, cipher_key)
+            cipher_text = byte_read_text(settings['encrypted_file'])
+            text = symmetric_decrypt(symmetric_key, cipher_text)
+            byte_write_text(text, settings['decrypted_file'])

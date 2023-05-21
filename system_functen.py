@@ -20,9 +20,7 @@ def load_settings(settings_file: str) -> dict:
 def save_asymmetric_keys(private_key, public_key, private_pem: str, public_pem: str) -> None:
     try:
         with open(private_pem, 'wb') as private_out:
-            private_out.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
-                                                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                                                        encryption_algorithm=serialization.NoEncryption()))
+            private_out.write(private_key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.TraditionalOpenSSL, encryption_algorithm=serialization.NoEncryption()))
         logging.info(f'Private key successfully saved to {private_pem}')
     except OSError as err:
         logging.warning(f'Private key was not saved to file {private_pem}\n{err}')
