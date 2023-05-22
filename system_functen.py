@@ -8,6 +8,9 @@ logger = logging.getLogger()
 logger.setLevel('INFO')
 
 def load_settings(settings_file: str) -> dict:
+    """
+    Loads the settings file
+    """
     settings_data = None
     try:
         with open(settings_file) as json_file:
@@ -18,6 +21,12 @@ def load_settings(settings_file: str) -> dict:
     return settings_data
 
 def save_asymmetric_keys(private_key, public_key, private_pem: str, public_pem: str) -> None:
+    """
+    The function reads the text from the test file in bytes .
+
+    :file_name parameter: the name of the text file.
+    :return: text in byte form.
+    """
     try:
         with open(private_pem, 'wb') as private_out:
             private_out.write(private_key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.TraditionalOpenSSL, encryption_algorithm=serialization.NoEncryption()))
@@ -32,6 +41,13 @@ def save_asymmetric_keys(private_key, public_key, private_pem: str, public_pem: 
         logging.warning(f'Public key was not saved to file {public_pem}\n{err}')
 
 def save_symmetric_key(key: bytes, file_name: str) -> None:
+    """
+    The function saves a symmetric key to txt file.
+
+    :param key: symmetric key for symmetric encryption algorithm.
+    :param file_name: name of txt file.
+    :return: None.
+    """
     try:
         with open(file_name, 'wb') as key_file:
             key_file.write(key)
@@ -40,6 +56,12 @@ def save_symmetric_key(key: bytes, file_name: str) -> None:
         logging.warning(f'Symmetric key was not saved to file {file_name}\n{err}')
         
 def load_private_key(private_pem: str):
+    """
+    The function loads a private key from pem file.
+
+    :param private_pem: name of pem file.
+    :return: private key for asymmetric encoding algorithm.
+    """
     private_key = None
     try:
         with open(private_pem, 'rb') as pem_in:
@@ -51,6 +73,12 @@ def load_private_key(private_pem: str):
     return private_key
 
 def load_symmetric_key(file_name: str) -> bytes:
+    """
+     The function loads  a symmetric key from txt file.
+
+    :param file_name: name of txt file.
+    :return: symmetric key for symmetric encoding algorithm.
+    """
     try:
         with open(file_name, mode='rb') as key_file:
             key = key_file.read()
@@ -60,6 +88,12 @@ def load_symmetric_key(file_name: str) -> bytes:
     return key
 
 def byte_read_text(file_name: str) -> bytes:
+    """
+    The function reads text in byte form from txt file.
+
+    :param file_name: name of txt file.
+    :return: text in byte form.
+    """
     try:
         with open(file_name, mode='rb') as text_file:
             text = text_file.read()
@@ -69,6 +103,13 @@ def byte_read_text(file_name: str) -> bytes:
     return text
 
 def byte_write_text(text: bytes, file_name: str) -> None:
+    """
+    The function writes text in byte form to txt file.
+
+    :param text: text for writing
+    :param file_name: name of txt file.
+    :return: None
+    """
     try:
         with open(file_name, mode='wb') as text_file:
             text_file.write(text)
