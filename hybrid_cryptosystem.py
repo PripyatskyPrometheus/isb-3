@@ -1,11 +1,37 @@
 import argparse
 import logging
 
-from system_functen import load_settings, save_asymmetric_keys, save_symmetric_key, load_private_key, load_symmetric_key, byte_read_text, byte_write_text
+from system_functions import load_settings, save_asymmetric_keys, save_symmetric_key, load_private_key, load_symmetric_key, byte_read_text, byte_write_text
 from symmetric_encyption import generate_symmetric_key, symmetric_encrypt, symmetric_decrypt
 from asymmetric_encyption import generate_asymmetric_keys, asymmetric_encrypt, asymmetric_decrypt
 
 SETTINGS_FILE = 'files/settings.json'
+
+def generation_keys(length: int) -> None:
+    if 4 <= length <= 56:
+        symmetric_key = generate_symmetric_key(length)
+        private_key, public_key = generate_asymmetric_keys()
+        save_asymmetric_keys(private_key, public_key, settings['secret_key'], settings['public_key'])
+        cipher_symmetric_key = asymmetric_encrypt(public_key, symmetric_key)
+        save_symmetric_key(cipher_symmetric_key, settings['symmetric_key'])
+    else:
+        logging.warning('Symmetric key must be between 4 and 56 bytes long')
+
+def encryption_text():
+    private_key = load_private_key(settings['secret_key'])
+    cipher_key = load_symmetric_key(settings['symmetric_key'])
+    symmetric_key = asymmetric_decrypt(private_key, cipher_key)
+    text = byte_read_text(settings['initial_file'])
+    cipher_text = symmetric_encrypt(symmetric_key, text)
+    byte_write_text(cipher_text, settings['encrypted_file'])
+
+def decryption_text():
+    private_key = load_private_key(settings['secret_key'])
+    cipher_key = load_symmetric_key(settings['symmetric_key'])
+    symmetric_key = asymmetric_decrypt(private_key, cipher_key)
+    cipher_text = byte_read_text(settings['encrypted_file'])
+    text = symmetric_decrypt(symmetric_key, cipher_text)
+    byte_write_text(text, settings['decrypted_file'])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -19,25 +45,8 @@ if __name__ == '__main__':
     if settings:
         if args.generation:
             length = args.generation
-            if 4 <= length <= 56:
-                symmetric_key = generate_symmetric_key(length)
-                private_key, public_key = generate_asymmetric_keys()
-                save_asymmetric_keys(private_key, public_key, settings['secret_key'], settings['public_key'])
-                cipher_symmetric_key = asymmetric_encrypt(public_key, symmetric_key)
-                save_symmetric_key(cipher_symmetric_key, settings['symmetric_key'])
-            else:
-                logging.warning('Symmetric key must be between 4 and 56 bytes long')
+            generation_keys(length)
         elif args.encryption:
-            private_key = load_private_key(settings['secret_key'])
-            cipher_key = load_symmetric_key(settings['symmetric_key'])
-            symmetric_key = asymmetric_decrypt(private_key, cipher_key)
-            text = byte_read_text(settings['initial_file'])
-            cipher_text = symmetric_encrypt(symmetric_key, text)
-            byte_write_text(cipher_text, settings['encrypted_file'])
+            encryption_text()
         else:
-            private_key = load_private_key(settings['secret_key'])
-            cipher_key = load_symmetric_key(settings['symmetric_key'])
-            symmetric_key = asymmetric_decrypt(private_key, cipher_key)
-            cipher_text = byte_read_text(settings['encrypted_file'])
-            text = symmetric_decrypt(symmetric_key, cipher_text)
-            byte_write_text(text, settings['decrypted_file'])
+            decryption_text()

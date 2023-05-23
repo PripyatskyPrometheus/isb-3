@@ -27,8 +27,12 @@ def asymmetric_encrypt(public_key, text: bytes) -> bytes:
     :param text: text for encryption.
     :return: encrypted text.
     """
-    cipher_text = public_key.encrypt(text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
-    logging.info('Asymmetric encryption was successful')
+    try:
+        cipher_text = public_key.encrypt(text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
+        logging.info('Asymmetric encryption was successful')
+    except Exception as err:
+        logging.error(f"Asymmetric encryption was not successful: {str(err)}")
+        raise Exception("Asymmetric encryption was not successful")
     return cipher_text
 
 def asymmetric_decrypt(private_key, cipher_text: bytes) -> bytes:
@@ -39,6 +43,11 @@ def asymmetric_decrypt(private_key, cipher_text: bytes) -> bytes:
     :param cipher_text: ciphertext.
     :return: decrypted text.
     """
-    text = private_key.decrypt(cipher_text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
-    logging.info('Asymmetric decryption was successful')
+    try:
+        text = private_key.decrypt(cipher_text, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
+        logging.info('Asymmetric decryption was successful')
+        
+    except Exception as err:
+        logging.error(f"Asymmetric encryption was not successful: {str(err)}")
+        raise Exception("error")
     return text
